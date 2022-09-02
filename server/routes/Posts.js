@@ -13,6 +13,6 @@ router.get("/all", GetAllPosts);
 router.post("/create", Authmiddleware, CreatePost);
 router.delete("/delete/:id", Authmiddleware, DeletePost);
 router.put("/update/:id", Authmiddleware, UpdatePost);
-router.patch("/like/:id", LikeHandler);
+router.patch("/like/:id", Authmiddleware, LikeHandler);
 
 module.exports = router;

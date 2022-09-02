@@ -14,6 +14,18 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
+function errorHandler(dispatch, msg) {
+  return dispatch({
+    type: "OPEN_ALERT",
+    payload: {
+      isOpen: true,
+      variant: "bg-red-50",
+      textVariant: "text-red-500",
+      msg: msg,
+    },
+  });
+}
+
 const GetAllPosts = () => async (dispatch) => {
   try {
     const { data } = await axios.get(`http://localhost:8000/api/post/all`);
@@ -30,7 +42,7 @@ const CreatePost = (formData) => async (dispatch) => {
       dispatch({ type: "CREATE_POST", payload: data });
     }
   } catch (err) {
-    return err;
+    errorHandler(dispatch, "Please signin or signup");
   }
 };
 
@@ -39,23 +51,42 @@ const DeletePost = (id) => async (dispatch) => {
     await API.delete(`/delete/${id}`);
     dispatch({ type: "DELETE_POST", payload: id });
   } catch (err) {
-    return err;
+    errorHandler(dispatch, "Please signin or signup");
   }
 };
 
 const UpdatePost = (id, formData) => async (dispatch) => {
   try {
-    await API.put(`/update/${id}`, formData);
-    dispatch({
-      type: "UPDATE_POST",
-      payload: {
-        formData,
-        _id: id,
-      },
-    });
+    const { data } = await API.put(`/update/${id}`, formData);
+    if (data) {
+      dispatch({
+        type: "UPDATE_POST",
+        payload: {
+          formData: data,
+          _id: id,
+        },
+      });
+    }
   } catch (err) {
-    return err;
+    errorHandler(dispatch, "Please signin or signup");
   }
 };
 
-export { GetAllPosts, CreatePost, DeletePost, UpdatePost };
+const LikePost = (id, userId) => async (dispatch) => {
+  try {
+    const { data } = await API.patch(`/like/${id}`, { userId: userId });
+    if (data) {
+      dispatch({
+        type: "UPDATE_POST",
+        payload: {
+          _id: id,
+          formData: data,
+        },
+      });
+    }
+  } catch (err) {
+    errorHandler(dispatch, "Please signin or signup");
+  }
+};
+
+export { GetAllPosts, CreatePost, DeletePost, UpdatePost, LikePost };

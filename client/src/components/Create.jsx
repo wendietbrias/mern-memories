@@ -22,7 +22,7 @@ const Create = ({ id, setId }) => {
     if (!id) {
       dispatch(CreatePost({ ...formData, creator: decoded?.name }));
     } else {
-      dispatch(UpdatePost(formData));
+      dispatch(UpdatePost(id, formData));
     }
 
     setId(null);

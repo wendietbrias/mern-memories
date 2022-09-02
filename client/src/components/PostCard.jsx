@@ -1,18 +1,27 @@
 import moment from "moment";
-import {
-  HiOutlineThumbUp,
-  HiHandThumbUp,
-  HiOutlineTrash,
-} from "react-icons/hi";
+import { HiOutlineThumbUp, HiThumbUp, HiOutlineTrash } from "react-icons/hi";
 import { BsThreeDots } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
 import decode from "jwt-decode";
-import { DeletePost } from "../action/Posts";
+import { DeletePost, LikePost } from "../action/Posts";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const PostCard = ({ data, setId }) => {
   const dispatch = useDispatch();
-  const { auth } = useSelector((state) => state);
+  const { auth, posts } = useSelector((state) => state);
   const decoded = auth ? decode(auth) : {};
+  const [liked, setLiked] = useState(false);
+
+  useEffect(() => {
+    const checkLike = data?.likes?.find((userId) => userId === decoded?._id);
+
+    if (checkLike) {
+      return setLiked(true);
+    }
+
+    setLiked(false);
+  }, [data]);
 
   if (!data) return;
 
@@ -56,8 +65,15 @@ const PostCard = ({ data, setId }) => {
           ..
         </p>
         <div className="flex justify-between items-center mt-5">
-          <button className="flex items-center text-blue-500 font-medium">
-            <HiOutlineThumbUp className="mr-2" />
+          <button
+            onClick={() => dispatch(LikePost(data?._id, decoded?._id))}
+            className="flex items-center text-blue-500 font-medium"
+          >
+            {liked ? (
+              <HiThumbUp className="mr-2" />
+            ) : (
+              <HiOutlineThumbUp className="mr-2" />
+            )}
             {data?.likes?.length} Likes
           </button>
           {decoded?._id === data?.userId && (
