@@ -10,6 +10,24 @@ const PostsReducer = (state = [], { type, payload }) => {
       return state;
       break;
 
+    case "DELETE_POST":
+      const filtered = state.filter((data) =>
+        data._id !== payload ? data : ""
+      );
+      state = filtered;
+      return state;
+      break;
+
+    case "UPDATE_POST":
+      const updated = state.map((data) =>
+        data._id === payload?._id ? payload.formData : data
+      );
+
+      state = updated;
+
+      return state;
+      break;
+
     default:
       return state;
   }

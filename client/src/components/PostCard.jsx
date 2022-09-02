@@ -5,10 +5,12 @@ import {
   HiOutlineTrash,
 } from "react-icons/hi";
 import { BsThreeDots } from "react-icons/bs";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import decode from "jwt-decode";
+import { DeletePost } from "../action/Posts";
 
-const PostCard = ({ data }) => {
+const PostCard = ({ data, setId }) => {
+  const dispatch = useDispatch();
   const { auth } = useSelector((state) => state);
   const decoded = auth ? decode(auth) : {};
 
@@ -32,7 +34,10 @@ const PostCard = ({ data }) => {
             </p>
           </div>
           {decoded?._id === data?.userId && (
-            <BsThreeDots className="text-md cursor-pointer" />
+            <BsThreeDots
+              onClick={() => setId(data?._id)}
+              className="text-md cursor-pointer"
+            />
           )}
         </div>
         <img src={data?.image} alt={data?.title} className="w-full h-full" />
@@ -56,7 +61,10 @@ const PostCard = ({ data }) => {
             {data?.likes?.length} Likes
           </button>
           {decoded?._id === data?.userId && (
-            <button className="flex items-center font-medium text-blue-500">
+            <button
+              onClick={() => dispatch(DeletePost(data?._id))}
+              className="flex items-center font-medium text-blue-500"
+            >
               <HiOutlineTrash className="mr-2" />
               Delete
             </button>

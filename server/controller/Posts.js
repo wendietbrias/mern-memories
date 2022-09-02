@@ -29,7 +29,25 @@ const CreatePost = async (req, res) => {
   }
 };
 
-const UpdatePost = async (req, res) => {};
+const UpdatePost = async (req, res) => {
+  const findPost = postsModel.findById(req.params.id);
+
+  if (!findPost) {
+    return res.status(500).json({ msg: "post id is not valid " });
+  }
+
+  findPost.title = req.body.title;
+  findPost.tags = req.body.tags;
+  findPost.message = req.body.message;
+  findPost.image = req.body.image;
+
+  try {
+    const saved = await findPost.save();
+    res.status(200).json(saved);
+  } catch (err) {
+    return rer;
+  }
+};
 
 const DeletePost = async (req, res) => {
   const findPost = await postsModel.findById(req.params.id);

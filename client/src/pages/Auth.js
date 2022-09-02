@@ -3,9 +3,10 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
 import { SignInHandler, SignUpHandler } from "../action/Auth";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { Alert } from "../components";
 
 const Auth = () => {
-  const { auth } = useSelector((state) => state);
+  const { auth, alert } = useSelector((state) => state);
   const dispatch = useDispatch();
 
   const [isSignUp, setIsSignUp] = useState(false);
@@ -36,6 +37,7 @@ const Auth = () => {
       <h2 className="text-2xl text-center capitalize font-semibold">
         Authentication
       </h2>
+      {alert?.isOpen && <Alert />}
       <form onSubmit={handleSubmit} className="mt-7">
         {isSignUp ? (
           <input
@@ -80,10 +82,14 @@ const Auth = () => {
         </button>
       </form>
       {isSignUp ? null : (
-        <button className="w-full mt-2">
+        <button className="w-full mt-3 flex justify-center">
           <GoogleLogin
             onSuccess={(credentialResponse) => {
-              console.log(credentialResponse);
+              dispatch({
+                type: "AUTH",
+                payload: credentialResponse.credential,
+              });
+              window.location.href = "http://localhost:3000/";
             }}
             onError={() => {
               console.log("Login Failed");
@@ -93,7 +99,7 @@ const Auth = () => {
       )}
       <button
         onClick={() => setIsSignUp(!isSignUp)}
-        className="text-right w-full mt-4 text-gray-400"
+        className="text-right w-full mt-7 text-gray-400"
       >
         {isSignUp
           ? "Already have account? Login"

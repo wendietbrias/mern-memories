@@ -34,4 +34,28 @@ const CreatePost = (formData) => async (dispatch) => {
   }
 };
 
-export { GetAllPosts, CreatePost };
+const DeletePost = (id) => async (dispatch) => {
+  try {
+    await API.delete(`/delete/${id}`);
+    dispatch({ type: "DELETE_POST", payload: id });
+  } catch (err) {
+    return err;
+  }
+};
+
+const UpdatePost = (id, formData) => async (dispatch) => {
+  try {
+    await API.put(`/update/${id}`, formData);
+    dispatch({
+      type: "UPDATE_POST",
+      payload: {
+        formData,
+        _id: id,
+      },
+    });
+  } catch (err) {
+    return err;
+  }
+};
+
+export { GetAllPosts, CreatePost, DeletePost, UpdatePost };
